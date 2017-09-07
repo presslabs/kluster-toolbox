@@ -7,6 +7,9 @@ RUN set -ex \
     && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-kubernetes" "1.0.0" \
     && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-template" "0.1.1" \
     && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-random" "0.1.0" \
+    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-tls" "0.1.0" \
+    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-http" "0.1.0" \
+    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-external" "0.1.0" \
     && /usr/local/bin/terraform-install-plugin.sh "https://github.com/mcuadros/terraform-provider-helm/releases/download/v0.3.2/terraform-provider-helm_v0.3.2_linux_amd64.tar.gz" \
     && /usr/local/bin/terraform-install-plugin.sh "https://github.com/paybyphone/terraform-provider-acme/releases/download/v0.4.0/terraform-provider-acme_v0.4.0_linux_amd64.zip"
 
@@ -22,7 +25,7 @@ RUN set -ex \
 #     && go build \
 #     && mv terraform-provider-helm /usr/lib/terraform-plugins
 
-FROM google/cloud-sdk:162.0.1-alpine
+FROM google/cloud-sdk:169.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 
 RUN apk add --no-cache bash git openssl make libstdc++
@@ -42,7 +45,7 @@ RUN set -ex \
     && rm -rf /usr/src
 
 # install kubectl
-ENV KUBECTL_VERSION 1.7.4
+ENV KUBECTL_VERSION 1.7.5
 RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
@@ -71,7 +74,7 @@ RUN wget -q https://bootstrap.pypa.io/get-pip.py -O/tmp/get-pip.py \
     && apk del .build-deps
 
 # install terraform
-ENV TERRAFORM_VERSION 0.10.3
+ENV TERRAFORM_VERSION 0.10.4
 RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O terraform.zip \
     && unzip terraform.zip -d /usr/local/bin \
     && rm -f terraform.zip \
