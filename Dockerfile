@@ -1,3 +1,12 @@
+FROM golang:1.8-alpine as mozilla-sops
+RUN set -ex \
+    && apk add --no-cache git \
+    && mkdir -p ./src/go.mozilla.org/sops \
+    && cd ./src/go.mozilla.org/sops \
+    && git clone https://github.com/calind/sops ./ \
+    && git checkout gcloud-kms \
+    && cd cmd/sops && go build
+
 FROM golang:1.8-alpine as tf-plugins
 COPY terraform-install-plugin.sh /usr/local/bin/
 RUN set -ex \
@@ -28,12 +37,16 @@ RUN set -ex \
 FROM google/cloud-sdk:169.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 
-RUN apk add --no-cache bash git openssl make libstdc++
+RUN set -ex \
+    && apk add --no-cache bash git openssl python make libstdc++ \
+    && wget -q https://bootstrap.pypa.io/get-pip.py -O/tmp/get-pip.py \
+    && python /tmp/get-pip.py \
+    && rm /tmp/get-pip.py
 
 # install git-crypt
 ENV GIT_CRYPT_VERSION 0.5.0
 RUN set -ex \
-    && apk add --no-cache --virtual .build-deps gcc g++ openssl-dev \
+    && apk add --no-cache --virtual .build-deps gcc g++ openssl-dev make \
     && mkdir -p /usr/src \
     && cd /usr/src \
     && git clone https://github.com/AGWA/git-crypt.git \
@@ -66,13 +79,6 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERS
     && chmod 0755 /usr/local/bin/dockerize \
     && chown root:root /usr/local/bin/dockerize
 
-RUN wget -q https://bootstrap.pypa.io/get-pip.py -O/tmp/get-pip.py \
-    && python /tmp/get-pip.py \
-    && rm /tmp/get-pip.py \
-    && apk add --no-cache --virtual .build-deps build-base python-dev linux-headers \
-    && pip install --no-cache-dir google-cloud-datastore==1.1.0 \
-    && apk del .build-deps
-
 # install terraform
 ENV TERRAFORM_VERSION 0.10.4
 RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O terraform.zip \
@@ -81,12 +87,22 @@ RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraf
     && chmod 0755 /usr/local/bin/terraform \
     && chown root:root /usr/local/bin/terraform
 # copy terraform plugins
-COPY --from=tf-plugins /usr/lib/terraform-plugins /usr/lib/terraform-plugins
+COPY --from=tf-plugins /usr/lib/terraform-plugins /root/.terraform.d/plugins/linux_amd64/
+
+# install mozilla sops
+COPY --from=mozilla-sops /go/src/go.mozilla.org/sops/cmd/sops/sops /usr/local/bin/sops
+
+# install helm secrets plugin
+RUN set -ex \
+    && helm init --client-only \
+    && helm plugin install https://github.com/futuresimple/helm-secrets \
+    && helm repo add kubes https://presslabs-kubes.github.io/charts \
+    && helm repo add kluster https://kluster-charts.storage.googleapis.com
+
 # setup terraform for CI
 ENV TF_INPUT 0
-ENV TF_CLI_ARGS_init "-plugin-dir=/usr/lib/terraform-plugins"
 
-COPY *.sh helm-wrapper /usr/local/bin/
+COPY *.sh /usr/local/bin/
 
 WORKDIR /src
 

@@ -45,8 +45,3 @@ if [ ! -z "$CLUSTER" ] ; then
         run helm init --upgrade
     fi
 fi
-
-run helm init --client-only
-# Display helm version (usefull for debugging)
-run helm version -c
-run helm version -s || true
