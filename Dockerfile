@@ -36,6 +36,7 @@ RUN set -ex \
 
 FROM google/cloud-sdk:169.0.0-alpine
 ENV PYTHONUNBUFFERED 1
+ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
 RUN set -ex \
     && apk add --no-cache bash git openssl python make libstdc++ \
