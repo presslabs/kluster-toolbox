@@ -16,7 +16,7 @@ RUN set -ex \
     && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-kubernetes" "1.0.0" \
     && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-template" "1.0.0" \
     && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-random" "1.0.0" \
-    && /usr/local/bin/terraform-install-plugin.sh "https://github.com/mcuadros/terraform-provider-helm/releases/download/v0.3.2/terraform-provider-helm_v0.3.2_linux_amd64.tar.gz" \
+    && /usr/local/bin/terraform-install-plugin.sh "https://github.com/mcuadros/terraform-provider-helm/releases/download/v0.3.2/terraform-provider-helm_v0.3.2_linux_amd64.tar.gz"
 
 # # Install terraform-provider-helm plugin from source since it's not official yet
 # ENV TF_PROVIDER_HELM_REPO mcuadros/terraform-provider-helm
