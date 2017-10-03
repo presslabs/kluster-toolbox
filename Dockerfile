@@ -3,8 +3,8 @@ RUN set -ex \
     && apk add --no-cache git \
     && mkdir -p ./src/go.mozilla.org/sops \
     && cd ./src/go.mozilla.org/sops \
-    && git clone https://github.com/calind/sops ./ \
-    && git checkout gcloud-kms \
+    && git clone https://github.com/mozilla/sops ./ \
+    && git checkout 3dd0ef6b542e21a1b0684212aed0afcf661e8e1a \
     && cd cmd/sops && go build
 
 FROM golang:1.8-alpine as tf-plugins
@@ -12,15 +12,11 @@ COPY terraform-install-plugin.sh /usr/local/bin/
 RUN set -ex \
     && apk add --no-cache openssl tar bash \
     && mkdir /usr/lib/terraform-plugins \
-    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-google" "0.1.3" \
+    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-google" "1.0.1" \
     && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-kubernetes" "1.0.0" \
-    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-template" "0.1.1" \
-    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-random" "0.1.0" \
-    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-tls" "0.1.0" \
-    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-http" "0.1.0" \
-    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-external" "0.1.0" \
+    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-template" "1.0.0" \
+    && /usr/local/bin/terraform-install-plugin.sh "terraform-provider-random" "1.0.0" \
     && /usr/local/bin/terraform-install-plugin.sh "https://github.com/mcuadros/terraform-provider-helm/releases/download/v0.3.2/terraform-provider-helm_v0.3.2_linux_amd64.tar.gz" \
-    && /usr/local/bin/terraform-install-plugin.sh "https://github.com/paybyphone/terraform-provider-acme/releases/download/v0.4.0/terraform-provider-acme_v0.4.0_linux_amd64.zip"
 
 # # Install terraform-provider-helm plugin from source since it's not official yet
 # ENV TF_PROVIDER_HELM_REPO mcuadros/terraform-provider-helm
@@ -34,7 +30,7 @@ RUN set -ex \
 #     && go build \
 #     && mv terraform-provider-helm /usr/lib/terraform-plugins
 
-FROM google/cloud-sdk:169.0.0-alpine
+FROM google/cloud-sdk:171.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
@@ -59,7 +55,7 @@ RUN set -ex \
     && rm -rf /usr/src
 
 # install kubectl
-ENV KUBECTL_VERSION 1.7.5
+ENV KUBECTL_VERSION 1.7.7
 RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
@@ -81,7 +77,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERS
     && chown root:root /usr/local/bin/dockerize
 
 # install terraform
-ENV TERRAFORM_VERSION 0.10.4
+ENV TERRAFORM_VERSION 0.10.7
 RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O terraform.zip \
     && unzip terraform.zip -d /usr/local/bin \
     && rm -f terraform.zip \
