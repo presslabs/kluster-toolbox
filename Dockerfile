@@ -1,12 +1,3 @@
-FROM golang:1.8-alpine as mozilla-sops
-RUN set -ex \
-    && apk add --no-cache git \
-    && mkdir -p ./src/go.mozilla.org/sops \
-    && cd ./src/go.mozilla.org/sops \
-    && git clone https://github.com/mozilla/sops ./ \
-    && git checkout 3dd0ef6b542e21a1b0684212aed0afcf661e8e1a \
-    && cd cmd/sops && go build
-
 FROM golang:1.8-alpine as tf-plugins
 COPY terraform-install-plugin.sh /usr/local/bin/
 RUN set -ex \
@@ -30,7 +21,7 @@ RUN set -ex \
 #     && go build \
 #     && mv terraform-provider-helm /usr/lib/terraform-plugins
 
-FROM google/cloud-sdk:174.0.0-alpine
+FROM google/cloud-sdk:176.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
@@ -55,13 +46,13 @@ RUN set -ex \
     && rm -rf /usr/src
 
 # install kubectl
-ENV KUBECTL_VERSION 1.7.8
+ENV KUBECTL_VERSION 1.8.2
 RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
 
 # install kubernetes helm
-ENV HELM_VERSION 2.6.2
+ENV HELM_VERSION 2.7.0
 RUN wget https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
@@ -77,7 +68,7 @@ RUN wget https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERS
     && chown root:root /usr/local/bin/dockerize
 
 # install terraform
-ENV TERRAFORM_VERSION 0.10.7
+ENV TERRAFORM_VERSION 0.10.8
 RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip -O terraform.zip \
     && unzip terraform.zip -d /usr/local/bin \
     && rm -f terraform.zip \
@@ -87,7 +78,10 @@ RUN wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraf
 COPY --from=tf-plugins /usr/lib/terraform-plugins /root/.terraform.d/plugins/linux_amd64/
 
 # install mozilla sops
-COPY --from=mozilla-sops /go/src/go.mozilla.org/sops/cmd/sops/sops /usr/local/bin/sops
+ENV SOPS_VERSION 3.0.0
+RUN wget -q https://github.com/mozilla/sops/releases/download/$SOPS_VERSION/sops-$SOPS_VERSION.linux -O /usr/local/bin/sops \
+    && chmod 0755 /usr/local/bin/sops \
+    && chown root:root /usr/local/bin/sops
 
 # install helm secrets plugin
 RUN set -ex \
