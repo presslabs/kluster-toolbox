@@ -93,6 +93,10 @@ RUN set -ex \
 # setup terraform for CI
 ENV TF_INPUT 0
 
+RUN set -ex \
+    && apk add --no-cache python3 python3-dev \
+    && python3 -m ensurepip
+
 COPY *.sh /usr/local/bin/
 
 WORKDIR /src
