@@ -1,9 +1,10 @@
-FROM google/cloud-sdk:181.0.0-alpine
+FROM google/cloud-sdk:183.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
 RUN set -ex \
-    && apk add --no-cache bash git openssl python make curl libstdc++ \
+    && apk add --no-cache bash git openssl python make curl libstdc++ ca-certificates wget \
+    && update-ca-certificates \
     && wget -q https://bootstrap.pypa.io/get-pip.py -O/tmp/get-pip.py \
     && python /tmp/get-pip.py \
     && rm /tmp/get-pip.py
@@ -22,15 +23,24 @@ RUN set -ex \
     && apk del .build-deps \
     && rm -rf /usr/src
 
+# install docker
+ENV DOCKER_VERSION 17.12.0-ce
+RUN set -ex \
+    && wget -q https://download.docker.com/linux/static/edge/x86_64/docker-$DOCKER_VERSION.tgz \
+    && tar -C /usr/local/bin -xzvf docker-$DOCKER_VERSION.tgz --strip-components 1 docker/docker \
+    && rm docker-$DOCKER_VERSION.tgz \
+    && chmod +x /usr/local/bin/docker \
+    && chown root:root /usr/local/bin/docker
+
 # install kubectl
 ENV KUBECTL_VERSION 1.8.5
-RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
+RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
 
 # install kubernetes helm
 ENV HELM_VERSION 2.7.2
-RUN wget https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
+RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && chmod 0755 /usr/local/bin/helm \
@@ -38,7 +48,7 @@ RUN wget https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linu
 
 # install dockerize for templating support
 ENV DOCKERIZE_VERSION 0.6.0
-RUN wget https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
+RUN wget -q https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
     && chmod 0755 /usr/local/bin/dockerize \
