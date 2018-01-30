@@ -3,8 +3,7 @@ ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
 RUN set -ex \
-    && apk add --no-cache bash git openssl python make curl libstdc++ ca-certificates wget \
-    && update-ca-certificates \
+    && apk add --no-cache bash git openssl python make curl libstdc++ ca-certificates wget coreutils \
     && wget -q https://bootstrap.pypa.io/get-pip.py -O/tmp/get-pip.py \
     && python /tmp/get-pip.py \
     && rm /tmp/get-pip.py
