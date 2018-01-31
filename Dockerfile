@@ -63,7 +63,7 @@ RUN wget -q https://github.com/mozilla/sops/releases/download/$SOPS_VERSION/sops
 RUN set -ex \
     && helm init --client-only \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
-    && helm repo add kubes https://presslabs-kubes.github.io/charts \
+    && helm repo add kubes https://presslabs-kubes.github.io/charts
 
 RUN set -ex \
     && apk add --no-cache python3 python3-dev \
