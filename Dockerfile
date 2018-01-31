@@ -38,7 +38,7 @@ RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_
     && chown root:root /usr/local/bin/kubectl
 
 # install kubernetes helm
-ENV HELM_VERSION 2.7.2
+ENV HELM_VERSION 2.8.0
 RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
@@ -54,7 +54,7 @@ RUN wget -q https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_V
     && chown root:root /usr/local/bin/dockerize
 
 # install mozilla sops
-ENV SOPS_VERSION 3.0.0
+ENV SOPS_VERSION 3.0.2
 RUN wget -q https://github.com/mozilla/sops/releases/download/$SOPS_VERSION/sops-$SOPS_VERSION.linux -O /usr/local/bin/sops \
     && chmod 0755 /usr/local/bin/sops \
     && chown root:root /usr/local/bin/sops
@@ -64,7 +64,6 @@ RUN set -ex \
     && helm init --client-only \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
     && helm repo add kubes https://presslabs-kubes.github.io/charts \
-    && helm repo add kluster https://kluster-charts.storage.googleapis.com
 
 RUN set -ex \
     && apk add --no-cache python3 python3-dev \
