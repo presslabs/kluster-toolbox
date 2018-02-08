@@ -65,6 +65,10 @@ RUN set -ex \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
     && helm repo add kubes https://presslabs-kubes.github.io/charts
 
+# add titanium repo
+RUN set -ex \
+    && helm repo add kluster-chart https://kluster-charts.storage.googleapis.com/
+
 RUN set -ex \
     && apk add --no-cache python3 python3-dev \
     && python3 -m ensurepip
