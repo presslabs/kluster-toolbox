@@ -28,7 +28,6 @@ run() {
     "$@"
 }
 
-
 if [ ! -z "$GOOGLE_CREDENTIALS" ] ; then
     echo "$GOOGLE_CREDENTIALS" > /run/google-credentials.json
     gcloud auth activate-service-account --key-file=/run/google-credentials.json
@@ -36,7 +35,6 @@ fi
 
 if [ ! -z "$CLUSTER" ] ; then
     require_google_credentials
-    echo "cluster: $CLUSTER"
     require_param "cluster"
     require_param "project"
     require_param "zone"
@@ -57,4 +55,3 @@ if [ ! -z "$SSH_KEY" ] ; then
     echo "$SSH_KEY" > "$HOME/.ssh/id_rsa"
     chmod 0400 "$HOME/.ssh/id_rsa"
 fi
-
