@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:183.0.0-alpine
+FROM google/cloud-sdk:193.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
@@ -32,13 +32,13 @@ RUN set -ex \
     && chown root:root /usr/local/bin/docker
 
 # install kubectl
-ENV KUBECTL_VERSION 1.8.5
+ENV KUBECTL_VERSION 1.9.5
 RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
 
 # install kubernetes helm
-ENV HELM_VERSION 2.8.0
+ENV HELM_VERSION 2.8.2
 RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
@@ -46,7 +46,7 @@ RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-l
     && chown root:root /usr/local/bin/helm
 
 # install dockerize for templating support
-ENV DOCKERIZE_VERSION 0.6.0
+ENV DOCKERIZE_VERSION 0.6.1
 RUN wget -q https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
     && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
     && rm dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
@@ -63,11 +63,8 @@ RUN wget -q https://github.com/mozilla/sops/releases/download/$SOPS_VERSION/sops
 RUN set -ex \
     && helm init --client-only \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
+    && helm repo add presslabs https://presslabs.github.io/charts \
     && helm repo add kubes https://presslabs-kubes.github.io/charts
-
-# add titanium repo
-RUN set -ex \
-    && helm repo add kluster-chart https://kluster-charts.storage.googleapis.com/
 
 RUN set -ex \
     && apk add --no-cache python3 python3-dev \
