@@ -4,6 +4,7 @@
 : ${CLUSTER:="$PLUGIN_CLUSTER"}
 : ${ZONE:="$PLUGIN_ZONE"}
 : ${UPGRADE_TILLER:="$PLUGIN_UPGRADE_TILLER"}
+: ${SSH_KEY:="$PLUGIN_SSH_KEY"}
 
 require_param() {
     declare name="$1"
@@ -15,15 +16,18 @@ require_param() {
     fi
 }
 
+require_google_credentials() {
+    if [ -z "$GOOGLE_CREDENTIALS" ] ; then
+        echo "You must define \"google_credentials_file\" parameter or define GOOGLE_CREDENTIALS environment variable" >&2
+        exit 2
+    fi
+}
+
 run() {
     echo "+" "$@"
     "$@"
 }
 
-if [ -z "$GOOGLE_CREDENTIALS" ] ; then
-    echo "You must define \"google_credentials_file\" parameter or define GOOGLE_CREDENTIALS environment variable" >&2
-    exit 2
-fi
 
 if [ ! -z "$GOOGLE_CREDENTIALS" ] ; then
     echo "$GOOGLE_CREDENTIALS" > /run/google-credentials.json
@@ -31,6 +35,7 @@ if [ ! -z "$GOOGLE_CREDENTIALS" ] ; then
 fi
 
 if [ ! -z "$CLUSTER" ] ; then
+    require_google_credentials
     echo "cluster: $CLUSTER"
     require_param "cluster"
     require_param "project"
@@ -45,3 +50,11 @@ if [ ! -z "$CLUSTER" ] ; then
         run helm init --upgrade
     fi
 fi
+
+if [ ! -z "$SSH_KEY" ] ; then
+    require_param "home"
+    test -d $HOME/.ssh || mkdir -p $HOME/.ssh
+    echo "$SSH_KEY" > $HOME/.ssh/id_rsa
+    chmod 0400 $HOME/.ssh/id_rsa
+fi
+
