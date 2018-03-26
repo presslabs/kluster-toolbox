@@ -9,7 +9,7 @@ RUN set -ex \
     && rm /tmp/get-pip.py
 
 # install docker
-ENV DOCKER_VERSION 17.12.0-ce
+ENV DOCKER_VERSION 18.03.0-ce
 RUN set -ex \
     && wget -q https://download.docker.com/linux/static/edge/x86_64/docker-$DOCKER_VERSION.tgz \
     && tar -C /usr/local/bin -xzvf docker-$DOCKER_VERSION.tgz --strip-components 1 docker/docker \
