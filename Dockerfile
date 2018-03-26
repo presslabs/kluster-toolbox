@@ -8,20 +8,6 @@ RUN set -ex \
     && python /tmp/get-pip.py \
     && rm /tmp/get-pip.py
 
-# install git-crypt
-ENV GIT_CRYPT_VERSION 0.5.0
-RUN set -ex \
-    && apk add --no-cache --virtual .build-deps gcc g++ openssl-dev make \
-    && mkdir -p /usr/src \
-    && cd /usr/src \
-    && git clone https://github.com/AGWA/git-crypt.git \
-    && cd git-crypt \
-    && git checkout $GIT_CRYPT_VERSION \
-    && make \
-    && make install \
-    && apk del .build-deps \
-    && rm -rf /usr/src
-
 # install docker
 ENV DOCKER_VERSION 17.12.0-ce
 RUN set -ex \

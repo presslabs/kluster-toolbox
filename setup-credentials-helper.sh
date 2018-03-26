@@ -41,7 +41,7 @@ if [ ! -z "$CLUSTER" ] ; then
     require_param "project"
     require_param "zone"
 
-    run gcloud container clusters get-credentials core --project "$PROJECT" --zone "$ZONE"
+    run gcloud container clusters get-credentials "$CLUSTER" --project "$PROJECT" --zone "$ZONE"
     # Display kubernetees versions (usefull for debugging)
     run kubectl version
 
@@ -53,8 +53,8 @@ fi
 
 if [ ! -z "$SSH_KEY" ] ; then
     require_param "home"
-    test -d $HOME/.ssh || mkdir -p $HOME/.ssh
-    echo "$SSH_KEY" > $HOME/.ssh/id_rsa
-    chmod 0400 $HOME/.ssh/id_rsa
+    test -d "$HOME/.ssh" || mkdir -p "$HOME/.ssh"
+    echo "$SSH_KEY" > "$HOME/.ssh/id_rsa"
+    chmod 0400 "$HOME/.ssh/id_rsa"
 fi
 
