@@ -54,4 +54,6 @@ if [ ! -z "$SSH_KEY" ] ; then
     test -d "$HOME/.ssh" || mkdir -p "$HOME/.ssh"
     echo "$SSH_KEY" > "$HOME/.ssh/id_rsa"
     chmod 0400 "$HOME/.ssh/id_rsa"
+    echo "Installed ssh key into $HOME/.ssh/id_rsa"
+    ssh-keygen -y -f "$HOME/.ssh/id_rsa"
 fi
