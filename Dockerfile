@@ -3,10 +3,12 @@ ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
 RUN set -ex \
-    && apk add --no-cache bash git openssl python make curl libstdc++ ca-certificates wget coreutils \
+    && apk add --no-cache bash git openssl python python3 make curl libstdc++ ca-certificates wget coreutils \
     && wget -q https://bootstrap.pypa.io/get-pip.py -O/tmp/get-pip.py \
     && python /tmp/get-pip.py \
-    && rm /tmp/get-pip.py
+    && rm /tmp/get-pip.py \
+    && python3 -m ensurepip \
+    && pip3 install zipa
 
 # install docker
 ENV DOCKER_VERSION 18.03.0-ce
@@ -52,11 +54,7 @@ RUN set -ex \
     && helm repo add presslabs https://presslabs.github.io/charts \
     && helm repo add kubes https://presslabs-kubes.github.io/charts
 
-RUN set -ex \
-    && apk add --no-cache python3 python3-dev \
-    && python3 -m ensurepip
-
-COPY *.sh /usr/local/bin/
+COPY *.sh gh /usr/local/bin/
 
 WORKDIR /src
 
