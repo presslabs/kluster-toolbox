@@ -52,7 +52,8 @@ RUN set -ex \
     && helm init --client-only \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
     && helm repo add presslabs https://presslabs.github.io/charts \
-    && helm repo add kubes https://presslabs-kubes.github.io/charts
+    && helm repo add kubes https://presslabs-kubes.github.io/charts \
+    && helm repo add titanium https://kluster-charts.storage.googleapis.com/
 
 COPY *.sh gh /usr/local/bin/
 
