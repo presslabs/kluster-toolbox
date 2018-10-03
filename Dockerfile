@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:198.0.0-alpine
+FROM google/cloud-sdk:219.0.1-alpine
 ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
@@ -11,7 +11,7 @@ RUN set -ex \
     && pip3 install zipa
 
 # install docker
-ENV DOCKER_VERSION 18.03.1-ce
+ENV DOCKER_VERSION 18.06.1-ce
 RUN set -ex \
     && wget -q https://download.docker.com/linux/static/edge/x86_64/docker-$DOCKER_VERSION.tgz \
     && tar -C /usr/local/bin -xzvf docker-$DOCKER_VERSION.tgz --strip-components 1 docker/docker \
@@ -20,13 +20,13 @@ RUN set -ex \
     && chown root:root /usr/local/bin/docker
 
 # install kubectl
-ENV KUBECTL_VERSION 1.9.8
+ENV KUBECTL_VERSION 1.9.11
 RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
 
 # install kubernetes helm
-ENV HELM_VERSION 2.9.1
+ENV HELM_VERSION 2.11.0
 RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
@@ -51,9 +51,9 @@ RUN wget -q https://github.com/mozilla/sops/releases/download/$SOPS_VERSION/sops
 RUN set -ex \
     && helm init --client-only \
     && helm plugin install https://github.com/futuresimple/helm-secrets \
+    && helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/ \
     && helm repo add presslabs https://presslabs.github.io/charts \
-    && helm repo add kubes https://presslabs-kubes.github.io/charts \
-    && helm repo add titanium https://kluster-charts.storage.googleapis.com/
+    && helm repo add kubes https://presslabs-kubes.github.io/charts
 
 COPY *.sh gh /usr/local/bin/
 
