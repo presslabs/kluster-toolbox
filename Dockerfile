@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:219.0.1-alpine
+FROM google/cloud-sdk:221.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
@@ -13,14 +13,14 @@ RUN set -ex \
 # install docker
 ENV DOCKER_VERSION 18.06.1-ce
 RUN set -ex \
-    && wget -q https://download.docker.com/linux/static/edge/x86_64/docker-$DOCKER_VERSION.tgz \
+    && wget -q https://download.docker.com/linux/static/stable/x86_64/docker-$DOCKER_VERSION.tgz \
     && tar -C /usr/local/bin -xzvf docker-$DOCKER_VERSION.tgz --strip-components 1 docker/docker \
     && rm docker-$DOCKER_VERSION.tgz \
     && chmod +x /usr/local/bin/docker \
     && chown root:root /usr/local/bin/docker
 
 # install kubectl
-ENV KUBECTL_VERSION 1.9.11
+ENV KUBECTL_VERSION 1.10.9
 RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
@@ -34,15 +34,15 @@ RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-l
     && chown root:root /usr/local/bin/helm
 
 # install dockerize for templating support
-ENV DOCKERIZE_VERSION 0.6.1
-RUN wget -q https://github.com/jwilder/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
-    && tar -C /usr/local/bin -xzvf dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
-    && rm dockerize-alpine-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
+ENV DOCKERIZE_VERSION 1.2.0
+RUN wget -q https://github.com/presslabs/dockerize/releases/download/v$DOCKERIZE_VERSION/dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-v$DOCKERIZE_VERSION.tar.gz \
     && chmod 0755 /usr/local/bin/dockerize \
     && chown root:root /usr/local/bin/dockerize
 
 # install mozilla sops
-ENV SOPS_VERSION 3.0.2
+ENV SOPS_VERSION 3.0.5
 RUN wget -q https://github.com/mozilla/sops/releases/download/$SOPS_VERSION/sops-$SOPS_VERSION.linux -O /usr/local/bin/sops \
     && chmod 0755 /usr/local/bin/sops \
     && chown root:root /usr/local/bin/sops
