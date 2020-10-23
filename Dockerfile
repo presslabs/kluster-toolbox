@@ -1,4 +1,4 @@
-FROM google/cloud-sdk:221.0.0-alpine
+FROM google/cloud-sdk:315.0.0-alpine
 ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
@@ -20,13 +20,13 @@ RUN set -ex \
     && chown root:root /usr/local/bin/docker
 
 # install kubectl
-ENV KUBECTL_VERSION 1.10.9
+ENV KUBECTL_VERSION 1.14.10
 RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
 
 # install kubernetes helm
-ENV HELM_VERSION 2.11.0
+ENV HELM_VERSION 2.16.12
 RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
@@ -42,15 +42,15 @@ RUN wget -q https://github.com/presslabs/dockerize/releases/download/v$DOCKERIZE
     && chown root:root /usr/local/bin/dockerize
 
 # install mozilla sops
-ENV SOPS_VERSION 3.0.5
-RUN wget -q https://github.com/mozilla/sops/releases/download/$SOPS_VERSION/sops-$SOPS_VERSION.linux -O /usr/local/bin/sops \
+ENV SOPS_VERSION 3.6.1
+RUN wget -q https://github.com/mozilla/sops/releases/download/v$SOPS_VERSION/sops-v$SOPS_VERSION.linux -O /usr/local/bin/sops \
     && chmod 0755 /usr/local/bin/sops \
     && chown root:root /usr/local/bin/sops
 
 # install helm secrets plugin
 RUN set -ex \
     && helm init --client-only \
-    && helm plugin install https://github.com/futuresimple/helm-secrets \
+    && helm plugin install https://github.com/zendesk/helm-secrets \
     && helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/ \
     && helm repo add presslabs https://presslabs.github.io/charts \
     && helm repo add kubes https://presslabs-kubes.github.io/charts
