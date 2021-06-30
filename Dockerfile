@@ -26,7 +26,7 @@ RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_
     && chown root:root /usr/local/bin/kubectl
 
 # install kubernetes helm
-ENV HELM_VERSION 2.16.12
+ENV HELM_VERSION 2.17.0
 RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
