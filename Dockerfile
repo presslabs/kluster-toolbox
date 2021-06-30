@@ -4,7 +4,7 @@ ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
 RUN set -ex \
     && apk add --no-cache bash git openssl python python3 make curl libstdc++ ca-certificates wget coreutils \
-    && wget -q https://bootstrap.pypa.io/get-pip.py -O/tmp/get-pip.py \
+    && wget -q https://bootstrap.pypa.io/pip/2.7/get-pip.py -O/tmp/get-pip.py \
     && python /tmp/get-pip.py \
     && rm /tmp/get-pip.py \
     && python3 -m ensurepip \
