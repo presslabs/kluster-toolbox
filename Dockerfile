@@ -20,7 +20,7 @@ RUN set -ex \
     && chown root:root /usr/local/bin/docker
 
 # install kubectl
-ENV KUBECTL_VERSION 1.14.10
+ENV KUBECTL_VERSION 1.16.15
 RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O/usr/local/bin/kubectl \
     && chmod 0755 /usr/local/bin/kubectl \
     && chown root:root /usr/local/bin/kubectl
