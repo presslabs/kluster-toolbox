@@ -51,7 +51,6 @@ RUN wget -q https://github.com/mozilla/sops/releases/download/v$SOPS_VERSION/sop
 RUN set -ex \
     && helm init --client-only \
     && helm plugin install https://github.com/zendesk/helm-secrets \
-    && helm repo add coreos https://s3-eu-west-1.amazonaws.com/coreos-charts/stable/ \
     && helm repo add presslabs https://presslabs.github.io/charts \
     && helm repo add kubes https://presslabs-kubes.github.io/charts
 
