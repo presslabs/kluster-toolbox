@@ -27,7 +27,7 @@ RUN wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_
 
 # install kubernetes helm
 ENV HELM_VERSION 3.6.3
-RUN wget -q https://kubernetes-helm.storage.googleapis.com/helm-v$HELM_VERSION-linux-amd64.tar.gz \
+RUN wget -q https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && tar -C /usr/local/bin -xzvf helm-v$HELM_VERSION-linux-amd64.tar.gz --strip-components 1 linux-amd64/helm \
     && rm helm-v$HELM_VERSION-linux-amd64.tar.gz \
     && chmod 0755 /usr/local/bin/helm \
