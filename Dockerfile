@@ -3,10 +3,7 @@ ENV PYTHONUNBUFFERED 1
 ENV GOOGLE_APPLICATION_CREDENTIALS /run/google-credentials.json
 
 RUN set -ex \
-    && apk add --no-cache bash git openssl python python3 make curl libstdc++ ca-certificates wget coreutils \
-    && wget -q https://bootstrap.pypa.io/pip/2.7/get-pip.py -O/tmp/get-pip.py \
-    && python /tmp/get-pip.py \
-    && rm /tmp/get-pip.py \
+    && apk add --no-cache bash git openssl python3 py3-pip make curl libstdc++ ca-certificates wget coreutils \
     && python3 -m ensurepip \
     && pip3 install zipa
 
